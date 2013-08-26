@@ -1884,18 +1884,14 @@
         var get = Ember.get, set = Ember.set;
         function triggerLoad(async) {
             return function () {
-                if (typeof this === 'object' && this !== null) {
-                    if (!get(this, 'content') && !get(this, 'isLoading')) {
-                        if (async) {
-                            Ember.run.later(this, 'load', 0);
-                        } else {
-                            this.load();
-                        }
+                if (!get(this, 'content') && !get(this, 'isLoading')) {
+                    if (async) {
+                        Ember.run.later(this, 'load', 0);
+                    } else {
+                        this.load();
                     }
-                    return this._super.apply(this, arguments);
-                } else {
-                    console.log('error in triggerload, this = ', this);
                 }
+                return this._super.apply(this, arguments);
             };
         }
         function passThrough(key, defaultValue) {
@@ -2173,6 +2169,7 @@
                 return this.didReceiveData(data, context);
             },
             processData: function (data, callback, binding) {
+                Ember.beginPropertyChanges();
                 var models = get(this, 'serializer').deserialize(data);
                 models.forEach(function (model) {
                     this.willLoadModel(model);
@@ -2182,6 +2179,7 @@
                     callback.call(binding || this, model);
                 }, this);
                 this.materializeRelationships(models);
+                Ember.endPropertyChanges();
             },
             willLoadModel: function (model) {
                 model.eachRelatedModel(function (relative) {

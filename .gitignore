@@ -2,5 +2,7 @@ node_modules
 #dist
 pkg
 *.gem
+dist/epf.prod*
+dist/*.map
 
 .DS_Store
