@@ -1983,21 +1983,23 @@
                 var session = get(this, 'session');
                 var type = get(this, 'type');
                 var id = get(this, 'id');
-                set(this, 'isLoading', true);
                 Ember.assert('Must be attached to a session.', get(this, 'session'));
-                Ember.assert('Must have an id to load.', id);
-                var promise = this.session.load(type, id);
-                if (get(promise, 'isLoaded')) {
-                    this.resolve(Ep.unwrap(promise));
-                } else {
-                    var proxy = this;
-                    promise.then(function (model) {
-                        proxy.resolve(model);
-                        return model;
-                    }, function (err) {
-                        proxy.reject(err);
-                        return err;
-                    });
+                if (get(this, 'session')) {
+                    set(this, 'isLoading', true);
+                    Ember.assert('Must have an id to load.', id);
+                    var promise = this.session.load(type, id);
+                    if (get(promise, 'isLoaded')) {
+                        this.resolve(Ep.unwrap(promise));
+                    } else {
+                        var proxy = this;
+                        promise.then(function (model) {
+                            proxy.resolve(model);
+                            return model;
+                        }, function (err) {
+                            proxy.reject(err);
+                            return err;
+                        });
+                    }
                 }
                 return this;
             }
