@@ -1983,8 +1983,7 @@
                 var session = get(this, 'session');
                 var type = get(this, 'type');
                 var id = get(this, 'id');
-
-                if (get(this, 'session')) {
+                if (session) {
                     set(this, 'isLoading', true);
 
                     var promise = this.session.load(type, id);
